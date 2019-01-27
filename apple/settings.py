@@ -160,4 +160,7 @@ REST_FRAMEWORK = {
 # Django Table
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
 
+# No append slash
+APPEND_SLASH = False
+
 django_heroku.settings(locals())
