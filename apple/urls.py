@@ -25,4 +25,5 @@ urlpatterns = [
     # path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
     # path('api-auth/', include('rest_framework.urls'))
+    path('telegram-bot312/', include('tele.urls'))
 ]
