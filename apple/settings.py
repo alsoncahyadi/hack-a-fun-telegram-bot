@@ -27,7 +27,7 @@ SECRET_KEY = '3(k0+fhr-(dd@qppzejusdchl5d*bm3kox&4()(@%!8a=-2_72'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["arfiadi.herokuapp.com", "localhost"]
+ALLOWED_HOSTS = ["gameathon.herokuapp.com", "localhost"]
 
 
 # Application definition
