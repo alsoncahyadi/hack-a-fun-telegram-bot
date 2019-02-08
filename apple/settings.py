@@ -61,6 +61,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
+        'HOST': '0.0.0.0',
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -161,3 +162,20 @@ REST_FRAMEWORK = {
 DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
 
 django_heroku.settings(locals())
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
