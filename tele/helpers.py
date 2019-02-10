@@ -1,20 +1,14 @@
 import random
 
-def generate_salt():
+def generate_salt(n=5):
     ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     chars=[]
-    for i in range(16):
+    for i in range(n):
         chars.append(random.choice(ALPHABET))
 
     
     return "".join(chars)
 
-def send_message(chat_id, text):
-    return HttpResponse(
-        requests.get(TELEGRAM_GET_URL.format(
-            method="sendMessage",
-            token=TOKEN,
-            chat_id=chat_id,
-            text=text
-        )).content
-    )
+def escape_if_not_authorized(req_json):
+    if req_json['message']['from']['is_bot']:
+        return "Sneaky You, Bot!"
