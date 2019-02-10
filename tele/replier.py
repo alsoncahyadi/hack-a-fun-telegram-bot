@@ -31,9 +31,10 @@ Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
 Tekan /help untuk melihat semua command yang ada""" 
 
-        salt = h.generate_salt()
+        salt = checked_player if checked_player.salt else h.generate_salt()
         new_player = m.Player()
         new_player.id = chat_id
+        new_player.salt = salt
         new_player.save()
         
         key = salt + str(chat_id)
