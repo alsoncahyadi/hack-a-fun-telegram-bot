@@ -19,8 +19,11 @@ class Replier():
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
 Tekan /help untuk melihat semua command yang ada""" 
-
-        checked_player = m.Player.objects.get(id=chat_id)
+        try:
+            checked_player = m.Player.objects.get(id=chat_id)
+        except m.Player.DoesNotExist:
+            checked_player = None
+            
         if checked_player:
             welcome_chat = \
 """Kamu sebelumnya sudah pernah daftar! :((
