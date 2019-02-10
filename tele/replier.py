@@ -14,11 +14,6 @@ class Replier():
         return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\Tekan /help untuk mengetahui semua command yang ada")
 
     def start(self, chat_id):
-        welcome_chat = \
-"""Selamat! Kamu telah terdaftar untuk bermain di Hackafun! :D
-Gunakan QR Code ini untuk mendapatkan point-mu ya!
-
-Tekan /help untuk melihat semua command yang ada""" 
         try:
             checked_player = m.Player.objects.get(id=chat_id)
         except m.Player.DoesNotExist:
@@ -33,6 +28,11 @@ Tekan /help untuk melihat semua command yang ada"""
             salt = checked_player.salt
             key = salt + str(chat_id)
         else:
+            welcome_chat = \
+"""Selamat! Kamu telah terdaftar untuk bermain di Hackafun! :D
+Gunakan QR Code ini untuk mendapatkan point-mu ya!
+
+Tekan /help untuk melihat semua command yang ada""" 
             salt = h.generate_salt()
             new_player = m.Player()
             new_player.id = chat_id
