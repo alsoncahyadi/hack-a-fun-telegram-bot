@@ -32,7 +32,6 @@ Gunakan QR Code ini untuk mendapatkan point-mu ya!
 Tekan /help untuk melihat semua command yang ada""" 
             salt = checked_player.salt
             key = salt + str(chat_id)
-            return self.messenger.send_qr(chat_id, qr, welcome_chat)
         else:
             salt = h.generate_salt()
             new_player = m.Player()
@@ -41,9 +40,10 @@ Tekan /help untuk melihat semua command yang ada"""
             new_player.save()
             
             key = salt + str(chat_id)
-            # key = md5(key.encode())   
-            qr = qrcode.make(key)
-            return self.messenger.send_qr(chat_id, qr, welcome_chat)
+            # key = md5(key.encode())
+
+        qr = qrcode.make(key)
+        return self.messenger.send_qr(chat_id, qr, welcome_chat)
 
     def getqr(self, chat_id):
         player = m.Player.objects.get(id=chat_id)
