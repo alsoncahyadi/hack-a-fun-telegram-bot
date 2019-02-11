@@ -18,6 +18,7 @@ class Chat(APIView):
     permission_classes = (AllowAny,)
     
     def post(self, request):
+        print(h.get_log(request))
         req_json = json.loads(request.body)
         if not h.is_message_valid(req_json):
             return HttpResponse("Sneaky you! You're not authorized!")

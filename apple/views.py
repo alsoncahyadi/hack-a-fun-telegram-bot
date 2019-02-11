@@ -18,6 +18,7 @@ class AddPoint(APIView):
     
     @transaction.atomic
     def post(self, request):
+        print(h.get_log(request))
         if self._is_params_valid(request):
             # Validate chat_id
             try:
