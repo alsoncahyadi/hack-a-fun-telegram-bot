@@ -20,7 +20,7 @@ Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
 Tekan /help untuk melihat semua command yang ada""" 
         already_registered_chat = \
-"""Kamu sebelumnya sudah pernah daftar! :((
+"""Kamu sebelumnya sudah pernah daftar!
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
 Tekan /help untuk melihat semua command yang ada""" 
