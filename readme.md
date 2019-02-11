@@ -1,7 +1,8 @@
 # Hackathon Point!
 ## Important to Note
 * host: gameathon.heroku.com/  
-* Authorization, salah satu antara (keduanya direturn pas login):
+* Authorization, salah satu antara (keduanya direturn pas login):  
+  <sub>I prefer cookies, tp kl session expire hrs dihandle</sub>
   * `Authorization` di header: `Token <token>`  
   * `sessionid` dan `csrftoken` di cookies
 * Get token from login first  
