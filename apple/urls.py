@@ -17,6 +17,7 @@ from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
 from .rest_resources import *
+import os
 
 router = routers.DefaultRouter()
 router.register('players', PlayerViewSet)
@@ -25,6 +26,6 @@ urlpatterns = [
     # path('', include('smth.urls')),
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('telegram-bot312/', include('tele.urls')),
+    path('telegram-bot{}/'.format(os.environ.get('MY_TOKEN', '312')), include('tele.urls')),
     path('rest-auth/', include('rest_auth.urls')),
 ]
