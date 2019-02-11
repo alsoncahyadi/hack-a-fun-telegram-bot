@@ -11,6 +11,9 @@ class Player(m.Model):
         return "{} | ID: {}".format(self.__class__.__name__, self.id)
 
     id = m.BigIntegerField(verbose_name="Player ID", primary_key=True)
+    username = m.CharField(verbose_name="Username", max_length=32, default='', db_index=True)
+    first_name = m.CharField(verbose_name="First Name", max_length=32, default='')
+    last_name = m.CharField(verbose_name="Last Name", max_length=32, default='')
     salt = m.CharField(verbose_name="Player's salt", max_length=16)
     physical_game_point = m.IntegerField(verbose_name = "Physical Game Point", default=0)
     ctr_tournament_point = m.IntegerField(verbose_name = "CTR (Tournament) Point", default=0)
@@ -20,3 +23,4 @@ class Player(m.Model):
     guitar_hero_point = m.IntegerField(verbose_name = "Guitar Hero Point", default=0)
     cs_go_point = m.IntegerField(verbose_name = "CS:GO Point", default=0)
     winning_eleven_point = m.IntegerField(verbose_name = "Winning Eleven Point", default=0)
+    

@@ -15,15 +15,16 @@ Including another URLconf
 """
 from django.urls import include, path
 from django.contrib import admin
-# from rest_framework import routers
+from rest_framework import routers
+from .rest_resources import *
 
-# router = routers.DefaultRouter()
-# router.register('suppliers', SupplierViewSet)
+router = routers.DefaultRouter()
+router.register('players', PlayerViewSet)
 
 urlpatterns = [
-    # path('', include('arfi.urls')),
-    # path('api/', include(router.urls)),
+    # path('', include('smth.urls')),
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
-    # path('api-auth/', include('rest_framework.urls'))
-    path('telegram-bot312/', include('tele.urls'))
+    path('telegram-bot312/', include('tele.urls')),
+    path('rest-auth/', include('rest_auth.urls')),
 ]

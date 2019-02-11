@@ -10,20 +10,22 @@ class Replier():
         self.token = token
         self.messenger = Messenger(token)
 
-    def default(self, chat_id, **kwargs):
+    def default(self, chat_id, message):
         return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\Tekan /help untuk mengetahui semua command yang ada")
 
-    def start(self, chat_id, **kwargs):
+    def start(self, chat_id, message):
         welcome_chat = \
 """Selamat! Kamu telah terdaftar untuk bermain di Hackafun! :D
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
-Tekan /help untuk melihat semua command yang ada""" 
+Tekan /help untuk melihat semua command yang ada"""
+
         already_registered_chat = \
 """Kamu sebelumnya sudah pernah daftar!
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
-Tekan /help untuk melihat semua command yang ada""" 
+Tekan /help untuk melihat semua command yang ada"""
+
         try:
             checked_player = m.Player.objects.get(id=chat_id)
         except m.Player.DoesNotExist:
@@ -35,18 +37,23 @@ Tekan /help untuk melihat semua command yang ada"""
         else:
             chat = welcome_chat
             salt = h.generate_salt()
-            new_player = m.Player()
-            new_player.id = chat_id
-            new_player.salt = salt
+            username = message['from'].get('username', '')
+            first_name = message['from'].get('first_name', '')
+            last_name = message['from'].get('last_name', '')
+
+            new_player = m.Player(
+                id = chat_id,
+                salt = salt,
+                username = username,
+            )
             new_player.save()
 
-        username = kwargs.get('username', '')
         key = self._get_key(salt, chat_id, username)
         # key = md5(key.encode())
         qr = qrcode.make(key)
         return self.messenger.send_qr(chat_id, qr, chat)
 
-    def getqr(self, chat_id, **kwargs):
+    def getqr(self, chat_id, message):
         player = m.Player.objects.get(id=chat_id)
         salt = player.salt
         username = kwargs.get('username', '')
@@ -54,7 +61,7 @@ Tekan /help untuk melihat semua command yang ada"""
         qr = qrcode.make(key)
         return self.messenger.send_qr(chat_id, qr)
 
-    def detail(self, chat_id, **kwargs):
+    def detail(self, chat_id, message):
         player = m.Player.objects.get(id=chat_id)
         detail_chat = \
 """
@@ -79,7 +86,7 @@ Tekan /help untuk melihat semua command yang ada"""
 
         return self.messenger.send_chat(chat_id, detail_chat, parse_mode='html')
 
-    def help(self, chat_id, **kwargs):
+    def help(self, chat_id, message):
         help_chat = \
 """Halo! Ini command-command yang tersedia ya:
 /getqr  Menampilkan QR Code mu
@@ -92,7 +99,7 @@ Tekan /help untuk melihat semua command yang ada"""
         chat_id = message['chat']['id']
         
         function = self.map_reply_message(message)
-        return function(chat_id, username=message.get('username', ''))
+        return function(chat_id, message)
     
     def map_reply_message(self, message):
         return {
