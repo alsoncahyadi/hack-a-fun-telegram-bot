@@ -1,5 +1,6 @@
 from django.db import models as m
 from django.contrib.auth import get_user_model
+import tele.helpers as h
 
 # Create your models here.
 # Revenue
@@ -8,8 +9,16 @@ class Player(m.Model):
         verbose_name = "Player"
         verbose_name_plural = "Players"
   
+    def full_name(self):
+        if self.first_name and self.last_name:
+            delim = " "
+        else:
+            delim = ""
+        return delim.join([self.first_name, self.last_name])
+
     def __str__(self):
-        return "{} | ID: {}".format(self.__class__.__name__, self.id)
+        return "{}  |  @{} ; {}".format(self.id, self.username, self.full_name())
+        
 
     id = m.BigIntegerField(verbose_name="Player ID", primary_key=True)
     username = m.CharField(verbose_name="Username", max_length=32, default='', db_index=True)
@@ -32,7 +41,7 @@ class Transaction(m.Model):
         verbose_name_plural = "Transactions"
   
     def __str__(self):
-        return "{} | ID: {}".format(self.__class__.__name__, self.id)
+        return "{}  |  @{} by {} ; {} ; {}".format(self.id, self.player.username, self.staff.username, h.game_type_to_s(self.game_type), self.point)
 
     id = m.AutoField(verbose_name="Player ID", primary_key=True)
     player = m.ForeignKey(Player, verbose_name="Player", on_delete=m.DO_NOTHING, db_index=True)
