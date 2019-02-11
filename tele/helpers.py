@@ -9,6 +9,11 @@ def generate_salt(n=5):
     
     return "".join(chars)
 
-def escape_if_not_authorized(req_json):
-    if req_json['message']['from']['is_bot']:
-        return "Sneaky You, Bot!"
+def is_authorized(req_json):
+    try:
+        if req_json['message']['from']['is_bot']:
+            return False
+    except:
+        return False
+        
+    return True

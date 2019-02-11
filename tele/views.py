@@ -19,18 +19,10 @@ def chat(request):
     if request.method == "POST" and request.body:
         req_json = json.loads(request.body)
         print(req_json)
-        h.escape_if_not_authorized(req_json)
+        if not h.is_authorized(req_json):
+            return HttpResponse("Sneaky you! You're not authorized!")
         response = replier.reply(req_json)
         return HttpResponse(response.content)
-        
-        # message = req_json['message']
-
-        # chat_id = message['chat']['id']
-        # key = str(chat_id) + h.generate_salt()
-        # qr = qrcode.make(key)
-        # caption = "Hello, {} {}!".format(message['from'].get('first_name', ''), message['from'].get('last_name', ''))
-        
-        # return messenger.send_qr(message, qr, caption)
     else:
         return HttpResponse("Sneaky you!")
 
