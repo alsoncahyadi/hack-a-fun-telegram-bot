@@ -29,4 +29,4 @@ def get_log(request):
         'body': request.body,
     }
     log_entries_list = ["'{k}': '{v}'".format(k=k, v=v) for k, v in log_entries.items()]
-    return "{ " + ";\n".join(log_entries_list) + " }"
+    return "{ " + "; ".join(log_entries_list) + " }"
