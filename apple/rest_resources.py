@@ -14,7 +14,16 @@ class PlayerSerializer(s.ModelSerializer):
     model = Player
     fields = '__all__'
 
+class TransactionSerializer(s.ModelSerializer):
+  class Meta:
+    model = Transaction
+    fields = '__all__'
+
 # ViewSet
 class PlayerViewSet(viewsets.ModelViewSet):
   queryset = Player.objects.all()
   serializer_class = PlayerSerializer
+
+class TransactionViewSet(viewsets.ModelViewSet):
+  queryset = Transaction.objects.all()
+  serializer_class = TransactionSerializer

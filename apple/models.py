@@ -1,4 +1,5 @@
 from django.db import models as m
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 # Revenue
@@ -23,4 +24,19 @@ class Player(m.Model):
     guitar_hero_point = m.IntegerField(verbose_name = "Guitar Hero Point", default=0)
     cs_go_point = m.IntegerField(verbose_name = "CS:GO Point", default=0)
     winning_eleven_point = m.IntegerField(verbose_name = "Winning Eleven Point", default=0)
+
+
+class Transaction(m.Model):
+    class Meta:
+        verbose_name = "Transaction"
+        verbose_name_plural = "Transactions"
+  
+    def __str__(self):
+        return "{} | ID: {}".format(self.__class__.__name__, self.id)
+
+    id = m.AutoField(verbose_name="Player ID", primary_key=True)
+    player = m.ForeignKey(Player, verbose_name="Player", on_delete=m.DO_NOTHING, db_index=True)
+    staff = m.ForeignKey(get_user_model(), verbose_name="Staff", on_delete=m.DO_NOTHING)
+    point = m.IntegerField(verbose_name = "Point")
+    game_type = m.SmallIntegerField(verbose_name = "game_type")
     

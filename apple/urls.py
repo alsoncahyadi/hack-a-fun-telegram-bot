@@ -17,10 +17,12 @@ from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
 from .rest_resources import *
+from . import views
 import os
 
 router = routers.DefaultRouter()
 router.register('players', PlayerViewSet)
+router.register('transactions', TransactionViewSet)
 
 urlpatterns = [
     # path('', include('smth.urls')),
@@ -28,4 +30,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('telegram-bot{}/'.format(os.environ.get('MY_TOKEN', '312')), include('tele.urls')),
     path('rest-auth/', include('rest_auth.urls')),
+    path('healthz/', views.healthz),
+    path('add-point/', views.AddPoint.as_view()),
 ]

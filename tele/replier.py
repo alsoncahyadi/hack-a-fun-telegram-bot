@@ -5,6 +5,7 @@ import qrcode
 # from hashlib import md5
 
 class Replier():
+    player_not_found_message = "Kamu belum terdaftar nih.\nUntuk mendaftar, klik /start ya! 😉"
 
     def __init__ (self, token):
         self.token = token
@@ -15,7 +16,7 @@ class Replier():
 
     def start(self, chat_id, message):
         welcome_chat = \
-"""Selamat! Kamu telah terdaftar untuk bermain di Hackafun! :D
+"""Selamat! Kamu telah terdaftar untuk bermain di Hackafun. 😄
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
 Tekan /help untuk melihat semua command yang ada"""
@@ -24,22 +25,21 @@ Tekan /help untuk melihat semua command yang ada"""
 """Kamu sebelumnya sudah pernah daftar!
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
-Tekan /help untuk melihat semua command yang ada"""
+Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 
         try:
             checked_player = m.Player.objects.get(id=chat_id)
         except m.Player.DoesNotExist:
             checked_player = None
             
+        username, first_name, last_name = self._get_user_names(message)
+
         if checked_player:
             chat = already_registered_chat
             salt = checked_player.salt
         else:
             chat = welcome_chat
             salt = h.generate_salt()
-            username = message['from'].get('username', '')
-            first_name = message['from'].get('first_name', '')
-            last_name = message['from'].get('last_name', '')
 
             new_player = m.Player(
                 id = chat_id,
@@ -48,25 +48,28 @@ Tekan /help untuk melihat semua command yang ada"""
             )
             new_player.save()
 
-        key = self._get_key(salt, chat_id, username)
+        key = self._get_key(salt, chat_id, username, first_name, last_name)
         # key = md5(key.encode())
         qr = qrcode.make(key)
         return self.messenger.send_qr(chat_id, qr, chat)
 
-    def getqr(self, chat_id, message):
+    def qr(self, chat_id, message):
         try:
             player = m.Player.objects.get(id=chat_id)
             salt = player.salt
-            username = message['from'].get('username', '')
-            key = self._get_key(salt, chat_id, username)
+            username, first_name, last_name = self._get_user_names(message)
+            
+            key = self._get_key(salt, chat_id, username, first_name, last_name)
             qr = qrcode.make(key)
             return self.messenger.send_qr(chat_id, qr)
-        except:
-            return self.start(chat_id, message)
+        except m.Player.DoesNotExist:
+            return self.messenger.send_chat(chat_id, self.player_not_found_message)
 
     def detail(self, chat_id, message):
-        player = m.Player.objects.get(id=chat_id)
-        detail_chat = \
+        
+        try:
+            player = m.Player.objects.get(id=chat_id)
+            detail_chat = \
 """
 <code>       Game Fisik  </code><b>{physical_game_point}</b>
 <code> CTR (Tournament)  </code><b>{ctr_tournament_point}</b>
@@ -87,15 +90,17 @@ Tekan /help untuk melihat semua command yang ada"""
         winning_eleven_point = player.winning_eleven_point,
     )
 
-        return self.messenger.send_chat(chat_id, detail_chat, parse_mode='html')
+            return self.messenger.send_chat(chat_id, detail_chat, parse_mode='html')
+        except m.Player.DoesNotExist:
+            return self.start(chat_id, self.player_not_found_message)
 
     def help(self, chat_id, message):
         help_chat = \
-"""Halo! Ini command-command yang tersedia ya:
-/getqr  Menampilkan QR Code mu
-/detail Menampilkan detail Hackafun mu
-/help   Menampilkan menu help"""
-        return self.messenger.send_chat(chat_id, help_chat)
+"""Ini command-command yang kamu bisa pakai 😊
+/qr  ➡️  Menampilkan QR Code mu
+/detail  ➡️  Menampilkan detail Hackafun mu
+/help  ➡️  Menampilkan menu help"""
+        return self.messenger.send_chat(chat_id, help_chat, parse_mode='html')
 
     def reply(self, req_json, **kwargs):
         message = req_json['message']
@@ -108,10 +113,16 @@ Tekan /help untuk melihat semua command yang ada"""
         return {
             '/start': self.start,
             '/help': self.help,
-            '/getqr': self.getqr,
+            '/qr': self.qr,
             '/detail': self.detail,
         }.get(message['text'], self.default)
 
-    def _get_key(self, salt, chat_id, username):
+    def _get_key(self, salt, chat_id, username, first_name, last_name):
         chat_id_str = str(chat_id).zfill(18) # BigInt max digit
-        return ';'.join([salt, chat_id_str, username])
+        return ';'.join([salt, chat_id_str, username, first_name, last_name])
+
+    def _get_user_names(self, message):
+        username = message['from'].get('username', '')
+        first_name = message['from'].get('first_name', '')
+        last_name = message['from'].get('last_name', '')
+        return username, first_name, last_name
