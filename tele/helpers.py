@@ -24,7 +24,8 @@ def is_authorized(request):
 
 def get_log(request):
     log_entries = {
-        'host': request.get_host(),
+        'remote_host': request.META.get('REMOTE_HOST', ''),
+        'host': request.META.get('HTTP_HOST', ''),
         'body': request.body,
     }
 
