@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
@@ -31,5 +32,5 @@ urlpatterns = [
     path('telegram-bot{}/'.format(os.environ.get('MY_TOKEN', '312')), include('tele.urls')),
     path('rest-auth/', include('rest_auth.urls')),
     path('healthz/', views.healthz),
-    path('add-point/', views.AddPoint.as_view()),
+    path('add-point/', csrf_exempt(views.AddPoint.as_view())),
 ]
