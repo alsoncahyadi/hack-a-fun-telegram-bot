@@ -1,7 +1,9 @@
 # Hackathon Point!
 ## Important to Note
 * host: gameathon.heroku.com/  
-* Authorization di header: `Token <token>`  
+* Authorization, salah satu antara (keduanya direturn pas login):
+  * `Authorization` di header: `Token <token>`  
+  * `sessionid` dan `csrftoken` di cookies
 * Get token from login first  
 * DONT FORGET THE SLASH (/) AT THE END OF EVERY URL  
   
