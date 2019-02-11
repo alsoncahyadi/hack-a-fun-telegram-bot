@@ -7,6 +7,7 @@
   * `sessionid` dan `csrftoken` di cookies
 * Get token from login first  
 * DONT FORGET THE SLASH (/) AT THE END OF EVERY URL  
+* U can access admin dashboard at `<host>/admin`
   
 ## API tree
 ```
