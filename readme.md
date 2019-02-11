@@ -26,7 +26,7 @@ tree:
 |           * salt => str (required)
 |
 |
-|   (ini FYI aja)
+|   (ini FYI aja, ga dipake mustinya)
 |___api/
     |___players/
     |       GET
