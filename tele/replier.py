@@ -54,12 +54,15 @@ Tekan /help untuk melihat semua command yang ada"""
         return self.messenger.send_qr(chat_id, qr, chat)
 
     def getqr(self, chat_id, message):
-        player = m.Player.objects.get(id=chat_id)
-        salt = player.salt
-        username = kwargs.get('username', '')
-        key = self._get_key(salt, chat_id, username)
-        qr = qrcode.make(key)
-        return self.messenger.send_qr(chat_id, qr)
+        try:
+            player = m.Player.objects.get(id=chat_id)
+            salt = player.salt
+            username = message['from'].get('username', '')
+            key = self._get_key(salt, chat_id, username)
+            qr = qrcode.make(key)
+            return self.messenger.send_qr(chat_id, qr)
+        except:
+            return self.start(chat_id, message)
 
     def detail(self, chat_id, message):
         player = m.Player.objects.get(id=chat_id)
