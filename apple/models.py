@@ -9,21 +9,12 @@ class Player(m.Model):
         verbose_name = "Player"
         verbose_name_plural = "Players"
   
-    def full_name(self):
-        if self.first_name and self.last_name:
-            delim = " "
-        else:
-            delim = ""
-        return delim.join([self.first_name, self.last_name])
-
     def __str__(self):
-        return "{}  |  @{} ; {}".format(self.id, self.username, self.full_name())
+        return "{}  |  @{}".format(self.id, self.username)
         
 
     id = m.BigIntegerField(verbose_name="Player ID", primary_key=True)
     username = m.CharField(verbose_name="Username", max_length=32, default='', db_index=True)
-    first_name = m.CharField(verbose_name="First Name", max_length=32, default='')
-    last_name = m.CharField(verbose_name="Last Name", max_length=32, default='')
     salt = m.CharField(verbose_name="Player's salt", max_length=16)
     physical_game_point = m.IntegerField(verbose_name = "Physical Game Point", default=0)
     ctr_tournament_point = m.IntegerField(verbose_name = "CTR (Tournament) Point", default=0)
