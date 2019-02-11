@@ -46,8 +46,8 @@ tree:
 ```
 
 ## QR CODE, delimiter: `;` with elements:
-1. salt
-2. chat_id_str (18 digits)
-3. username (WITHOUT @) (may be empty)
-4. first name (may be empty)
-5. last name (may be empty)
+1. `salt`
+2. `chat_id_str` (18 digits)
+3. `username` (WITHOUT @) (may be empty)
+4. `first_name` (may be empty)
+5. `last_name` (may be empty)
