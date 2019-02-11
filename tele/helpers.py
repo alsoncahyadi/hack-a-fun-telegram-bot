@@ -24,10 +24,11 @@ def is_authorized(request):
 
 def get_log(request):
     log_entries = {
-        'remote_host': request.META.get('REMOTE_HOST', ''),
+        'agent': request.META.get('HTTP_USER_AGENT', ''),
+        'remote_host': ' | '.join([request.META.get('REMOTE_ADDR'), request.META.get('HTTP_ORIGIN', '')]),
+        # 'metas': request.META,
         'host': request.META.get('HTTP_HOST', ''),
         'body': request.body,
     }
-
     log_entries_list = ["'{k}': '{v}'".format(k=k, v=v) for k, v in log_entries.items()]
     return "{ " + "; ".join(log_entries_list) + " }"
