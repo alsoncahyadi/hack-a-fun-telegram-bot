@@ -1,3 +1,5 @@
+from rest_auth.registration.views import LoginView
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
@@ -63,6 +65,10 @@ class AddPoint(APIView):
         old_point = getattr(player, game_type + "_point")
         setattr(player, game_type + "_point", old_point + point)
         player.save()
+
+
+class LoginViewCustom(LoginView):
+    authentication_classes = (TokenAuthentication,)
 
 
 def healthz(request):

@@ -30,6 +30,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
     path('telegram-bot{}/'.format(os.environ.get('MY_TOKEN', '312')), include('tele.urls')),
+    path('rest-auth/login/$', views.LoginViewCustom.as_view(), name='rest_login'),
     path('rest-auth/', include('rest_auth.urls')),
     path('healthz/', views.healthz),
     path('add-point/', csrf_exempt(views.AddPoint.as_view())),

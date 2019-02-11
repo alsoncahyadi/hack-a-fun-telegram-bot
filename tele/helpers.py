@@ -21,9 +21,6 @@ def is_message_valid(req_json):
 
     return True
 
-def is_authorized(request):
-    return (request.body and request.get_host() == '') or os.environ.get('IS_PRODUCTION') != 'TRUE'
-
 def get_log(request):
     log_entries = {
         'agent': request.META.get('HTTP_USER_AGENT', ''),
