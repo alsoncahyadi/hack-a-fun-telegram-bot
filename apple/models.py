@@ -10,7 +10,19 @@ class Player(m.Model):
         verbose_name_plural = "Players"
   
     def __str__(self):
-        return "{}  |  @{}".format(self.id, self.username)
+        return "{}  |  @{} ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {})".format(
+            self.id,
+            self.username,
+            
+            'phy', self.physical_game_point,
+            'ctr_t', self.ctr_tournament_point,
+            'ctr_f', self.ctr_free_play_point,
+            'ccmt', self.cerdas_cermat_point,
+            'r1', self.ranking_1_point,
+            'gh', self.guitar_hero_point,
+            'cs', self.cs_go_point,
+            'we', self.winning_eleven_point,
+        )
         
 
     id = m.BigIntegerField(verbose_name="Player ID", primary_key=True)
