@@ -11,7 +11,7 @@ class Player(m.Model):
         return "{} | ID: {}".format(self.__class__.__name__, self.id)
 
     id = m.BigIntegerField(verbose_name="Player ID", primary_key=True)
-    salt = m.CharField(verbose_name="Player's salt", max_length=5)
+    salt = m.CharField(verbose_name="Player's salt", max_length=16)
     physical_game_point = m.IntegerField(verbose_name = "Physical Game Point", default=0)
     ctr_tournament_point = m.IntegerField(verbose_name = "CTR (Tournament) Point", default=0)
     ctr_free_play_point = m.IntegerField(verbose_name = "CTR (Free Play) Point", default=0)
