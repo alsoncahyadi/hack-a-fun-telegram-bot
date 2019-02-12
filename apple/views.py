@@ -22,7 +22,7 @@ class AddPoint(APIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser)
 
-    point_added_notification_message =
+    point_added_notification_message = \
 """🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 
 🎉 Woohoo! Point <b>{game_name}</b> kamu telah ditambah sebesar <code>{point}</code> menjadi <code>{final_value} 🎉</code>
 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉"""
