@@ -22,7 +22,7 @@ class AddPoint(APIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser)
 
-    point_added_notification_message = "Woohoo! Point {game_name} kamu telah ditambah sebesar {point} menjadi {final_value}"
+    point_added_notification_message = "🙌🎊🎉 Woohoo! Point {game_name} kamu telah ditambah sebesar {point} menjadi {final_value} 🎉🎊🙌"
     
     def post(self, request):
         print(h.get_log(request))
