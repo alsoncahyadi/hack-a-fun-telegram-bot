@@ -23,9 +23,7 @@ class AddPoint(APIView):
     parser_classes = (JSONParser, FormParser)
 
     point_added_notification_message = \
-"""🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 
-🎉 Woohoo! Point <b>{game_name}</b> kamu telah ditambah sebesar <code>{point}</code> menjadi <code>{final_value} 🎉</code>
-🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉 🙌 🎊 🎉"""
+"""🙌 🎊 🎉 Woohoo! Point <b>{game_name}</b> kamu telah ditambah sebesar <code>{point}</code> menjadi <code>{final_value} 🎉</code>"""
     
     def post(self, request):
         print(h.get_log(request))
