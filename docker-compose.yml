@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=averystrongpassword
+      - MYSQL_HOST=db
+      - MYSQL_PORT=33306
+      - MYSQL_USER=my_user
+      - MYSQL_PASSWORD=my_password
+      - MYSQL_LOYALTY_DATABASE=my_database
+      - MYSQL_DATABASE=apple
+    ports:
+        # MySQL
+        - "33306:3306"
+    volumes:
+        # Mysql
+        - "./volumes/mysql:/var/lib/mysql"
+  web:
+    command: python manage.py runserver 0.0.0.0:8000
+    build: .
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - TELE_TOKEN=729503980:AAGC-OcfQrFePV2nGhKLCi3NK64deRZ1qa8
+      - MY_TOKEN=qII4zfxvXkAivCCqvuuqDdwEyNCMqK76P6VzLmEHhWMFTQc9vsRJMuk6E0j7R1CN
+      - SAVE_TRANSACTION=TRUE
+      - IS_DOCKER=TRUE

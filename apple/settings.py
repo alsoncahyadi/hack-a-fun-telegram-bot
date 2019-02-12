@@ -14,6 +14,8 @@ import os
 import dj_database_url
 import django_heroku
 
+IS_DOCKER = os.environ.get('IS_DOCKER', 'FALSE') == "TRUE"
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -78,18 +80,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apple.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'apple',
-        'USER': 'root',
-        'PASSWORD': 'rootpw',
+if IS_DOCKER:
+    SITE_ID = 1
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'apple',
+            'USER': os.environ.get('DB_USER', 'root'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'averystrongpassword'), 
+            'HOST': 'db',
+            'PORT': 3306,
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'apple',
+            'USER': 'root',
+            'PASSWORD': 'rootpw',
+        }
+    }
 
 # DB_URL = os.getenv('DB_URL')
 # DATABASES['default'] = dj_database_url.parse(DB_URL, conn_max_age=600)
