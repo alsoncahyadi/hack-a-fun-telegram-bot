@@ -1,6 +1,8 @@
 # Icon must end with two \r
 Icon
 
+# Docker
+volumes/
 
 # Thumbnails
 ._*
