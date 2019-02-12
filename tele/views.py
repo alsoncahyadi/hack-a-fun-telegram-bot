@@ -1,7 +1,7 @@
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser, FormParser
 import requests
 import logging
@@ -17,7 +17,7 @@ replier = Replier(TOKEN)
 
 class Chat(APIView):
     permission_classes = (AllowAny,)
-    parser_classes = (JSONParser)
+    parser_classes = (JSONParser,)
     
     def post(self, request):
         print(h.get_log(request))
@@ -25,7 +25,7 @@ class Chat(APIView):
         if not h.is_message_valid(data):
             return HttpResponse("Sneaky you! You're not authorized!")
         response = replier.reply(data)
-        return HttpResponse(response.content)
+        return JsonResponse(json.loads(response.content))
 
 
 def healthz(request):
