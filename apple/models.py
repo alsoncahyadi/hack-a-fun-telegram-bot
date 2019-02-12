@@ -43,8 +43,8 @@ class Transaction(m.Model):
         return "{}  |  @{} by {} ; {} ; {}".format(self.id, self.player.username, self.staff.username, h.game_type_to_s(self.game_type), self.point)
 
     id = m.AutoField(verbose_name="Player ID", primary_key=True)
-    player = m.ForeignKey(Player, verbose_name="Player", on_delete=m.DO_NOTHING, db_index=True)
-    staff = m.ForeignKey(get_user_model(), verbose_name="Staff", on_delete=m.DO_NOTHING)
+    player = m.ForeignKey(Player, verbose_name="Player", on_delete=m.DO_NOTHING, db_index=True, null=True)
+    staff = m.ForeignKey(get_user_model(), verbose_name="Staff", on_delete=m.DO_NOTHING, null=True)
     point = m.IntegerField(verbose_name = "Point")
     game_type = m.SmallIntegerField(verbose_name = "game_type")
     
