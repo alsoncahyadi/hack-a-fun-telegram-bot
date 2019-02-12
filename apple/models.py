@@ -10,7 +10,7 @@ class Player(m.Model):
         verbose_name_plural = "Players"
   
     def __str__(self):
-        return "{}  |  @{}".format(
+        return "[{}]  @{}".format(
             self.id,
             self.username,
         )
@@ -40,7 +40,7 @@ class Transaction(m.Model):
         verbose_name_plural = "Transactions"
   
     def __str__(self):
-        return "{}  |  @{} by {} ; {} ; {}".format(self.id, self.player.username, self.staff.username, h.game_type_to_s(self.game_type), self.point)
+        return "{}  |  for {} by {}; {}; {}".format(self.id, self.player, self.staff, h.game_type_to_s(self.game_type), self.point)
 
     id = m.AutoField(verbose_name="Player ID", primary_key=True)
     player = m.ForeignKey(Player, verbose_name="Player", on_delete=m.SET_NULL, db_index=True, null=True)
