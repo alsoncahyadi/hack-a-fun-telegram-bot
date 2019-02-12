@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework.parsers import JSONParser, FormParser
 from rest_framework import permissions
 from django.db import transaction
 from .rest_resources import PlayerSerializer
@@ -15,46 +16,47 @@ import os
 
 class AddPoint(APIView):
     permission_classes = (IsAuthenticated,)
+    parser_classes = (JSONParser, FormParser)
     
     @transaction.atomic
     def post(self, request):
         print(h.get_log(request))
-        if self._is_params_valid(request):
+        data = request.data
+        if self._is_data_valid(data):
             # Validate chat_id
             try:
-                params = self._parse_params(request)
-                chat_id = int(params['chat_id'])
+                chat_id = int(data['chat_id'])
                 player = Player.objects.get(id=chat_id)
-            except m.Player.DoesNotExist:
+            except Player.DoesNotExist:
                 return h.error_response(404, "Player not found")
 
             # Validate salt
-            if params['salt'] != player.salt:
+            if data['salt'] != player.salt:
                 return h.error_response(403, "Forbidden, wrong NaCl")
 
             # Validate game_type
             try:
-                self._add_game_point(player, params['game_type'], int(params['point']))
+                self._add_game_point(player, data['game_type'], int(data['point']))
             except:
-                return h.error_response(422, "Invalid game_type: {}".format(params['game_type']))
+                return h.error_response(422, "Invalid game_type: {}".format(data['game_type']))
 
             if os.environ.get('SAVE_TRANSACTION', 'TRUE') == 'TRUE':
                 staff = request.user
-                t = Transaction(player=player, staff=staff, point=params['point'], game_type = h.game_type_to_i(params['game_type']))
+                t = Transaction(player=player, staff=staff, point=data['point'], game_type = h.game_type_to_i(data['game_type']))
                 t.save()
             
             return HttpResponse(json.dumps({
-                    'message': PlayerSerializer(player).data
+                    'message': PlayerSerializer(player).data,
+                    'code': 201
                 }),
                 status=201,
             )
         else:
             return h.error_response(422, "Invalid key or incomplete payload")
 
-    def _is_params_valid(self, request):
+    def _is_data_valid(self, data):
         required_params = ('game_type', 'point', 'chat_id', 'salt')
         try:
-            data = json.loads(request.body)
             return set(data.keys()) == set(required_params)
         except:
             return False
