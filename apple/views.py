@@ -22,7 +22,7 @@ class AddPoint(APIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser)
 
-    point_added_notification_message = "🙌🎊🎉 Woohoo! Point {game_name} kamu telah ditambah sebesar {point} menjadi {final_value} 🎉🎊🙌"
+    point_added_notification_message = "🙌🎊🎉 Woohoo! Point <b>{game_name}</b> kamu telah ditambah sebesar <code>{point}</code> menjadi <code>{final_value}</code> 🎉🎊🙌"
     
     def post(self, request):
         print(h.get_log(request))
@@ -53,7 +53,7 @@ class AddPoint(APIView):
                     game_name = h.game_type_s_to_name(data['game_type']),
                     point = int(data['point']),
                     final_value = new_point,
-                ))
+                ), parse_mode='html')
                 print("> INFO : Notif status {} for {}".format(response, data['chat_id']))
             except:
                 print("> ERROR: Failed sending notif to {} with trace {}".format(data['chat_id'], traceback.format_exc(5).splitlines(),))
