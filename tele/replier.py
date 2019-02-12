@@ -7,9 +7,8 @@ import qrcode
 class Replier():
     player_not_found_message = "Kamu belum terdaftar nih.\nUntuk mendaftar, klik /start ya! 😉"
 
-    def __init__ (self, token):
-        self.token = token
-        self.messenger = Messenger(token)
+    def __init__ (self, messenger):
+        self.messenger = messenger
 
     def default(self, chat_id, message):
         return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\Tekan /help untuk mengetahui semua command yang ada")

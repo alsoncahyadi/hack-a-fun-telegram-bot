@@ -10,15 +10,20 @@ from rest_framework import permissions
 from django.db import transaction
 from .rest_resources import PlayerSerializer
 from .models import *
+from tele.messenger import Messenger
 import tele.helpers as h
 import json
-import os
+import os, traceback
+
+TOKEN = os.environ['TELE_TOKEN']
+messenger = Messenger(TOKEN)
 
 class AddPoint(APIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser)
+
+    point_added_notification_message = "Woohoo! Point {game_name} kamu telah ditambah sebesar {point} menjadi {final_value}"
     
-    @transaction.atomic
     def post(self, request):
         print(h.get_log(request))
         data = request.data
@@ -36,15 +41,24 @@ class AddPoint(APIView):
 
             # Validate game_type
             try:
-                self._add_game_point(player, data['game_type'], int(data['point']))
-            except:
+                _, new_point, _ = self._add_game_point(player, data['game_type'], int(data['point']), request.user)
+            except AttributeError:
                 return h.error_response(422, "Invalid game_type: {}".format(data['game_type']))
+            except:
+                return h.error_response(500, "Error saving {}".format(data))
 
-            if os.environ.get('SAVE_TRANSACTION', 'TRUE') == 'TRUE':
-                staff = request.user
-                t = Transaction(player=player, staff=staff, point=data['point'], game_type = h.game_type_to_i(data['game_type']))
-                t.save()
-            
+            # Notify user
+            try:
+                response = messenger.send_chat(chat_id, self.point_added_notification_message.format(
+                    game_name = h.game_type_s_to_name(data['game_type']),
+                    point = int(data['point']),
+                    final_value = new_point,
+                ))
+                print("> INFO : Notif status {} for {}".format(response, data['chat_id']))
+            except:
+                print("> ERROR: Failed sending notif to {} with trace {}".format(data['chat_id'], traceback.format_exc(5).splitlines(),))
+
+            # Return response
             return JsonResponse({
                     'message': PlayerSerializer(player).data,
                     'code': 201
@@ -64,10 +78,18 @@ class AddPoint(APIView):
     def _parse_params(self, request):
         return json.loads(request.body)
 
-    def _add_game_point(self, player, game_type, point):
+    @transaction.atomic
+    def _add_game_point(self, player, game_type, point, staff=None):
         old_point = getattr(player, game_type + "_point")
-        setattr(player, game_type + "_point", old_point + point)
+        new_point = old_point + point
+        setattr(player, game_type + "_point", new_point)
         player.save()
+
+        t = None
+        if os.environ.get('SAVE_TRANSACTION', 'TRUE') == 'TRUE':
+            t = Transaction(player=player, staff=staff, point=point, game_type = h.game_type_to_i(game_type))
+            t.save()
+        return old_point, new_point, t
 
 
 class LoginViewCustom(LoginView):

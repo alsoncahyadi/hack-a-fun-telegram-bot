@@ -1,7 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-import random
-import os
-import json
+import random, os, json, traceback
 
 def generate_salt(n=16):
     ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -22,18 +20,25 @@ def is_message_valid(req_json):
     return True
 
 def get_log(request):
+    def get_object_log_str(obj):
+        if obj.__class__ == ''.__class__:
+            return "'" + str(obj) + "'"
+        else:
+            return str(obj)
+
     log_entries = {
         'agent': request.META.get('HTTP_USER_AGENT', ''),
         'remote_host': ' | '.join([request.META.get('REMOTE_ADDR'), request.META.get('HTTP_ORIGIN', '')]),
         'data': request.data,
     }
-    log_entries_list = ["'{k}': '{v}'".format(k=k, v=v) for k, v in log_entries.items()]
+    log_entries_list = ["'{k}': {v}".format(k=k, v=get_object_log_str(v)) for k, v in log_entries.items()]
     return "{ " + "; ".join(log_entries_list) + " }"
 
 def error_response(code, message):
     message_entry = {
         'code': code,
-        'message': message
+        'message': message,
+        'stack_trace': traceback.format_exc(5).splitlines(),
     }
     return JsonResponse(message_entry, status=code)
 
@@ -69,5 +74,21 @@ def game_type_to_s(game_type_i):
         12: 'inferno_extinguisher',
         13: 'floating_ball_race',
         14: 'human_table_soccer',
-
     }.get(game_type_i, None)
+
+def game_type_s_to_name(game_type_s):
+    return {
+        'ctr_tournament': 'Baby Rattle',
+        'ctr_free_play': 'Move Up Cup',
+        'cerdas_cermat': 'Jumping The Riddles',
+        'ranking_1': 'Inferno Extinguisher',
+        'guitar_hero': 'Floating Ball Race',
+        'cs_go': 'Human Table Soccer',
+        'winning_eleven': 'CTR Tournament',
+        'baby_rattle': 'CTR Free Play',
+        'move_up_cup': 'Winning Eleven',
+        'jumping_the_riddles': 'Counter Strike: Global Offensive',
+        'inferno_extinguisher': 'Guitar Hero',
+        'floating_ball_race': 'Ranking 1',
+        'human_table_soccer': 'Cerdas Cermat',
+    }.get(game_type_s, None)

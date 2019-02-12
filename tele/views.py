@@ -10,10 +10,12 @@ import os
 import qrcode
 from . import helpers as h
 from .replier import Replier
+from .messenger import Messenger
 from apple import models
 
 TOKEN = os.environ['TELE_TOKEN']
-replier = Replier(TOKEN)
+messenger = Messenger(TOKEN)
+replier = Replier(messenger)
 
 class Chat(APIView):
     permission_classes = (AllowAny,)
