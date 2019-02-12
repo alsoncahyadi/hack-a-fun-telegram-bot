@@ -28,7 +28,6 @@ class Player(m.Model):
     id = m.BigIntegerField(verbose_name="Player ID", primary_key=True)
     username = m.CharField(verbose_name="Username", max_length=32, default='', db_index=True)
     salt = m.CharField(verbose_name="Player's salt", max_length=16)
-    physical_game_point = m.IntegerField(verbose_name = "Physical Game Point", default=0)
     ctr_tournament_point = m.IntegerField(verbose_name = "CTR (Tournament) Point", default=0)
     ctr_free_play_point = m.IntegerField(verbose_name = "CTR (Free Play) Point", default=0)
     cerdas_cermat_point = m.IntegerField(verbose_name = "Cerdas Cermat Point", default=0)
@@ -36,6 +35,12 @@ class Player(m.Model):
     guitar_hero_point = m.IntegerField(verbose_name = "Guitar Hero Point", default=0)
     cs_go_point = m.IntegerField(verbose_name = "CS:GO Point", default=0)
     winning_eleven_point = m.IntegerField(verbose_name = "Winning Eleven Point", default=0)
+    baby_rattle_point = m.IntegerField(verbose_name = "Baby Rattle Point", default = 0)
+    move_up_cup_point = m.IntegerField(verbose_name = "Move Up Cup Point", default = 0)
+    jumping_the_riddles_point = m.IntegerField(verbose_name = "Jumping the Riddles Point", default = 0)
+    inferno_extinguisher_point = m.IntegerField(verbose_name = "Inferno Extinguisher Point", default = 0)
+    floating_ball_race_point = m.IntegerField(verbose_name = "Floating Ball Race Point", default = 0)
+    human_table_soccer_point = m.IntegerField(verbose_name = "Huma Table Soccer Point", default = 0)
 
 
 class Transaction(m.Model):
