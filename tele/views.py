@@ -2,6 +2,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework.parsers import JSONParser, FormParser
 import requests
 import logging
 import json
