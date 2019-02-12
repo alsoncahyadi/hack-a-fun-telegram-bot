@@ -15,7 +15,7 @@ class Replier():
 
     def start(self, chat_id, message):
         welcome_chat = \
-"""Selamat! Kamu telah terdaftar untuk bermain di Hackafun. 😄
+"""Selamat! Kamu telah terdaftar untuk bermain di Hack-a-Fun. 😄
 Gunakan QR Code ini untuk mendapatkan point-mu ya!
 
 Tekan /help untuk melihat semua command yang ada"""
@@ -107,7 +107,7 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
         help_chat = \
 """Ini command-command yang kamu bisa pakai 😊
 /qr  ➡️  Menampilkan QR Code mu
-/detail  ➡️  Menampilkan detail Hackafun mu
+/detail  ➡️  Menampilkan detail Hack-a-Fun mu
 /help  ➡️  Menampilkan menu help"""
         return self.messenger.send_chat(chat_id, help_chat, parse_mode='html')
 
