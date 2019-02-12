@@ -77,7 +77,6 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 <code> Inferno Extinguisher  </code><b>{inferno_extinguisher_point}</b>
 <code>   Floating Ball Race  </code><b>{floating_ball_race_point}</b>
 <code>   Human Table Soccer  </code><b>{human_table_soccer_point}</b>
-<code>           Game Fisik  </code><b>{physical_game_point}</b>
 <code>     CTR (Tournament)  </code><b>{ctr_tournament_point}</b>
 <code>      CTR (Free Play)  </code><b>{ctr_free_play_point}</b>
 <code>        Cerdas Cermat  </code><b>{cerdas_cermat_point}</b>
@@ -86,7 +85,12 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 <code>                CS:GO  </code><b>{cs_go_point}</b>
 <code>       Winning Eleven  </code><b>{winning_eleven_point}</b>
 """.format(
-        physical_game_point= player.physical_game_point,
+        baby_rattle_point = player.baby_rattle_point,
+        move_up_cup_point = player.move_up_cup_point,
+        jumping_the_riddles_point = player.jumping_the_riddles_point,
+        inferno_extinguisher_point = player.inferno_extinguisher_point,
+        floating_ball_race_point = player.floating_ball_race_point,
+        human_table_soccer_point = player.human_table_soccer_point,
         ctr_tournament_point = player.ctr_tournament_point,
         ctr_free_play_point = player.ctr_free_play_point,
         cerdas_cermat_point = player.cerdas_cermat_point,
