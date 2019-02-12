@@ -10,7 +10,7 @@ class Player(m.Model):
         verbose_name_plural = "Players"
   
     def __str__(self):
-        return "{}  |  @{} ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {}) ({}: {})".format(
+        return "{}  |  @{}".format(
             self.id,
             self.username,
         )
