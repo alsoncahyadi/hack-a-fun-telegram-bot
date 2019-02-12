@@ -83,8 +83,8 @@ WSGI_APPLICATION = 'apple.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+SITE_ID = 1
 if IS_DOCKER:
-    SITE_ID = 1
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
