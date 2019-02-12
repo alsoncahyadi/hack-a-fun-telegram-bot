@@ -39,7 +39,6 @@ def error_response(code, message):
 
 def game_type_to_i(game_type_s):
     return {
-        'physical_game': 1,
         'ctr_tournament': 2,
         'ctr_free_play': 3,
         'cerdas_cermat': 4,
