@@ -11,7 +11,7 @@ class Replier():
         self.messenger = messenger
 
     def default(self, chat_id, message):
-        return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\Tekan /help untuk mengetahui semua command yang ada")
+        return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\NTekan /help untuk mengetahui semua command yang ada")
 
     def start(self, chat_id, message):
         welcome_chat = \
