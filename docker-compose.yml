@@ -32,3 +32,5 @@ services:
       - MY_TOKEN=
       - SAVE_TRANSACTION=TRUE
       - IS_DOCKER=TRUE
+      - DB_USER=root
+      - DB_PASSWORD=averystrongpassword
