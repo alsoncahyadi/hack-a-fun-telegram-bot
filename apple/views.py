@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser, FormParser
 from rest_framework import permissions
 from django.db import transaction
@@ -45,10 +45,10 @@ class AddPoint(APIView):
                 t = Transaction(player=player, staff=staff, point=data['point'], game_type = h.game_type_to_i(data['game_type']))
                 t.save()
             
-            return HttpResponse(json.dumps({
+            return JsonResponse({
                     'message': PlayerSerializer(player).data,
                     'code': 201
-                }),
+                },
                 status=201,
             )
         else:
