@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import random
 import os
 import json
@@ -31,11 +31,11 @@ def get_log(request):
     return "{ " + "; ".join(log_entries_list) + " }"
 
 def error_response(code, message):
-    message_entry = json.dumps({
+    message_entry = {
         'code': code,
         'message': message
-    })
-    return HttpResponse(message_entry, status=code)
+    }
+    return JsonResponse(message_entry, status=code)
 
 def game_type_to_i(game_type_s):
     return {
