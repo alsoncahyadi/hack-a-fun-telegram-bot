@@ -1,6 +1,6 @@
 # Hackathon Point!
 ## Important to Note
-* host: gameathon.heroku.com/  
+* host: gameathon.herokuapp.com/  
 * `Authorization` di header: `Token <token>`  
 * Get token from login first  
 * DONT FORGET THE SLASH (/) AT THE END OF EVERY URL  
