@@ -16,13 +16,14 @@ replier = Replier(TOKEN)
 
 class Chat(APIView):
     permission_classes = (AllowAny,)
+    parser_classes = (JSONParser)
     
     def post(self, request):
         print(h.get_log(request))
-        req_json = json.loads(request.body)
-        if not h.is_message_valid(req_json):
+        data = request.data
+        if not h.is_message_valid(data):
             return HttpResponse("Sneaky you! You're not authorized!")
-        response = replier.reply(req_json)
+        response = replier.reply(data)
         return HttpResponse(response.content)
 
 

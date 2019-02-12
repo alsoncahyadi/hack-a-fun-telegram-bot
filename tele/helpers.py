@@ -25,7 +25,7 @@ def get_log(request):
     log_entries = {
         'agent': request.META.get('HTTP_USER_AGENT', ''),
         'remote_host': ' | '.join([request.META.get('REMOTE_ADDR'), request.META.get('HTTP_ORIGIN', '')]),
-        'body': request.body,
+        'data': request.data,
     }
     log_entries_list = ["'{k}': '{v}'".format(k=k, v=v) for k, v in log_entries.items()]
     return "{ " + "; ".join(log_entries_list) + " }"
