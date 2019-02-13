@@ -182,6 +182,7 @@ DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
 django_heroku.settings(locals())
 
 # Logging
+LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -197,3 +198,5 @@ LOGGING = {
         },
     },
 }
+import logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

@@ -1,7 +1,8 @@
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from apple import models as m
 from .messenger import Messenger
 from . import helpers as h
-import qrcode
+import qrcode, logging
 # from hashlib import md5
 
 class Replier():
@@ -9,6 +10,7 @@ class Replier():
 
     def __init__ (self, messenger):
         self.messenger = messenger
+        self.logger = logging.getLogger(__name__)
 
     def default(self, chat_id, message):
         return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\nTekan /help untuk mengetahui semua command yang ada")
@@ -101,7 +103,7 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 
             return self.messenger.send_chat(chat_id, detail_chat, parse_mode='html')
         except m.Player.DoesNotExist:
-            return self.start(chat_id, self.player_not_found_message)
+            return self.messenger.send_chat(chat_id, self.player_not_found_message)
 
     def help(self, chat_id, message):
         help_chat = \
