@@ -10,10 +10,11 @@ from rest_framework import permissions
 from django.db import transaction
 from .rest_resources import PlayerSerializer
 from .models import *
+from django.db import connection
 from tele.messenger import Messenger
 import tele.helpers as h
 import json
-import os, traceback
+import os, traceback, logging
 
 TOKEN = os.environ['TELE_TOKEN']
 messenger = Messenger(TOKEN)
@@ -21,12 +22,13 @@ messenger = Messenger(TOKEN)
 class AddPoint(APIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser)
+    logger = logging.getLogger(__name__)
 
     point_added_notification_message = \
 """🙌 🎊 🎉 Woohoo! Point <b>{game_name}</b> kamu telah ditambah sebesar <code>{point}</code> menjadi <code>{final_value}</code>"""
     
     def post(self, request):
-        print(h.get_log(request))
+        self.logger.info((h.get_log(request)))
         data = request.data
         if self._is_data_valid(data):
             # Validate chat_id
@@ -40,9 +42,10 @@ class AddPoint(APIView):
             if data['salt'] != player.salt:
                 return h.error_response(403, "Forbidden, wrong NaCl")
 
-            # Validate game_type
+            # Add point
             try:
                 _, new_point, _ = self._add_game_point(player, data['game_type'], int(data['point']), request.user)
+                connection.close()
             except AttributeError:
                 return h.error_response(422, "Invalid game_type: {}".format(data['game_type']))
             except:

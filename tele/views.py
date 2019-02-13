@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser, FormParser
+from django.db import connection
 import requests
 import logging
 import json
@@ -31,6 +32,8 @@ class Chat(APIView):
             return JsonResponse(json.loads(response.content))
         except:
             return h.error_response(500, "Internal server error")
+        finally:
+            connection.close()
 
 
 def healthz(request):
