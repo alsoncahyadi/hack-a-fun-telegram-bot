@@ -72,6 +72,8 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
             player = m.Player.objects.get(id=chat_id)
             detail_chat = \
 """
+           👇 Berikut Pointmu 👇
+
 <code>          Baby Rattle  </code><b>{baby_rattle_point}</b>
 <code>          Move Up Cup  </code><b>{move_up_cup_point}</b>
 <code>  Jumping The Riddles  </code><b>{jumping_the_riddles_point}</b>
@@ -85,6 +87,11 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 <code>          Guitar Hero  </code><b>{guitar_hero_point}</b>
 <code>                CS:GO  </code><b>{cs_go_point}</b>
 <code>       Winning Eleven  </code><b>{winning_eleven_point}</b>
+
+<i>Pas tidur ga nyenyak</i>
+<i>Tau-tau rumah roboh</i> <b>*TJAKEEP*</b>
+<i>Mainlah banyak-banyak</i>
+<i>Sapa tau aja kaaan ketemu jodoh</i> 😊
 """.format(
         baby_rattle_point = player.baby_rattle_point,
         move_up_cup_point = player.move_up_cup_point,
@@ -100,8 +107,9 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
         cs_go_point = player.cs_go_point,
         winning_eleven_point = player.winning_eleven_point,
     )
-
-            return self.messenger.send_chat(chat_id, detail_chat, parse_mode='html')
+            res = self.messenger.send_chat(chat_id, detail_chat, parse_mode='html')
+            print(res)
+            return res
         except m.Player.DoesNotExist:
             return self.messenger.send_chat(chat_id, self.player_not_found_message)
 
