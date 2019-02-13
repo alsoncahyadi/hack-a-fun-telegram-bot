@@ -23,11 +23,14 @@ class Chat(APIView):
     
     def post(self, request):
         print(h.get_log(request))
-        data = request.data
-        if not h.is_message_valid(data):
-            return HttpResponse("Sneaky you! You're not authorized!")
-        response = replier.reply(data)
-        return JsonResponse(json.loads(response.content))
+        try:
+            data = request.data
+            if not h.is_message_valid(data):
+                return HttpResponse("Sneaky you! You're not authorized!")
+            response = replier.reply(data)
+            return JsonResponse(json.loads(response.content))
+        except:
+            return h.error_response(500, "Internal server error")
 
 
 def healthz(request):
