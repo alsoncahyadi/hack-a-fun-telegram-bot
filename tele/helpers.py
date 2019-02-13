@@ -40,6 +40,7 @@ def error_response(code, message):
         'message': message,
         'stack_trace': traceback.format_exc(5).splitlines(),
     }
+    print(message_entry)
     return JsonResponse(message_entry, status=code)
 
 def game_type_to_i(game_type_s):
