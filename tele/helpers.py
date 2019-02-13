@@ -14,6 +14,7 @@ def is_message_valid(req_json):
     try:
         if req_json['message']['from']['is_bot']:
             return False
+        req_json['message']['text']
     except:
         return False
 
