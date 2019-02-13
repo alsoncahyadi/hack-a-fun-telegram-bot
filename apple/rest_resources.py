@@ -12,7 +12,23 @@ from .models import *
 class PlayerSerializer(s.ModelSerializer):
   class Meta:
     model = Player
-    fields = '__all__'
+    fields = (
+      'username',
+      'ctr_tournament_point',
+      'ctr_free_play_point',
+      'cerdas_cermat_point',
+      'ranking_1_point',
+      'guitar_hero_point',
+      'cs_go_point',
+      'winning_eleven_point',
+      'baby_rattle_point',
+      'move_up_cup_point',
+      'jumping_the_riddles_point',
+      'inferno_extinguisher_point',
+      'floating_ball_race_point',
+      'human_table_soccer_point',
+    )
+
 
 class TransactionSerializer(s.ModelSerializer):
   class Meta:
@@ -23,6 +39,7 @@ class TransactionSerializer(s.ModelSerializer):
 class PlayerViewSet(viewsets.ModelViewSet):
   queryset = Player.objects.all()
   serializer_class = PlayerSerializer
+
 
 class TransactionViewSet(viewsets.ModelViewSet):
   queryset = Transaction.objects.all()
