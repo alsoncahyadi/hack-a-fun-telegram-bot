@@ -31,7 +31,7 @@ class Chat(APIView):
             response = replier.reply(data)
             return JsonResponse(json.loads(response.content))
         except:
-            return h.error_response(500, "Internal server error")
+            return h.error_response(500, "Internal server error", messenger)
         finally:
             connection.close()
 

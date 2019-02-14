@@ -14,18 +14,11 @@ class Replier():
 
     def default(self, chat_id, message):
         admin_chat = "`> From: `{username}\n`> Mesg: `{message}"
-        try:
-            # Try forwarding to admin
-            admin_chat_ids = os.environ.get('ADMIN_CHAT_IDS', '').split(';')
-            print("MASOK", admin_chat_ids)
-            for admin_chat_id in admin_chat_ids:
-                admin_chat = admin_chat.format(
-                    username = message['from']['username'],
-                    message = message.get('text', '`<NO_TEXT>`')
-                )
-                r = self.messenger.send_chat(int(admin_chat_id), admin_chat, parse_mode="MARKDOWN")
-        except:
-            pass
+        admin_chat = admin_chat.format(
+            username = message['from']['username'],
+            message = message.get('text', '`<NO_TEXT>`')
+        )
+        threading.Thread(target=self.messenger.forward_to_admin, args=(admin_chat,)).start()
         return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\nTekan /help untuk mengetahui semua command yang ada")
 
     def start(self, chat_id, message):
@@ -179,9 +172,9 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
                     t.start()
                 return self.messenger.send_chat(chat_id, "*Message kamu *`LAGI`* di blast*\n`Method: `{}\n`Thread: `{}".format(method, t))
             else:
-                return h.error_response(403, "Forbidden user trying to blast")
+                return h.error_response(403, "Forbidden user trying to blast", self.messenger)
         else:
-            return h.error_response(403, "Forbidden, blast whitelist is empty")
+            return h.error_response(403, "Forbidden, blast whitelist is empty", self.messenger)
 
     def reply(self, req_json, **kwargs):
         message = req_json['message']

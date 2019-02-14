@@ -36,20 +36,20 @@ class AddPoint(APIView):
                 chat_id = int(data['chat_id'])
                 player = Player.objects.get(id=chat_id)
             except Player.DoesNotExist:
-                return h.error_response(404, "Player not found")
+                return h.error_response(404, "Player not found", messenger)
 
             # Validate salt
             if data['salt'] != player.salt:
-                return h.error_response(403, "Forbidden, wrong NaCl")
+                return h.error_response(403, "Forbidden, wrong NaCl", messenger)
 
             # Add point
             try:
                 _, new_point, _ = self._add_game_point(player, data['game_type'], int(data['point']), request.user)
                 connection.close()
             except AttributeError:
-                return h.error_response(422, "Invalid game_type: {}".format(data['game_type']))
+                return h.error_response(422, "Invalid game_type: {}".format(data['game_type']), messenger)
             except:
-                return h.error_response(500, "Error saving {}".format(data))
+                return h.error_response(500, "Error saving {}".format(data), messenger)
 
             # Notify user
             try:
@@ -70,7 +70,7 @@ class AddPoint(APIView):
                 status=201,
             )
         else:
-            return h.error_response(422, "Invalid key or incomplete payload")
+            return h.error_response(422, "Invalid key or incomplete payload", messenger)
 
     def _is_data_valid(self, data):
         required_params = ('game_type', 'point', 'chat_id', 'salt')

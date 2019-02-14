@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-import random, os, json, traceback
+import random, os, json, traceback, threading
 
 def generate_salt(n=16):
     ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -35,13 +35,18 @@ def get_log(request):
     log_entries_list = ["'{k}': {v}".format(k=k, v=get_object_log_str(v)) for k, v in log_entries.items()]
     return "{ " + "; ".join(log_entries_list) + " }"
 
-def error_response(code, message):
+
+
+def error_response(code, message, messenger=None):
+    
     message_entry = {
         'code': code,
         'message': message,
         'stack_trace': traceback.format_exc(5).splitlines(),
     }
     print(message_entry)
+    if messenger:
+        threading.Thread(target=messenger.forward_to_admin, args=("*ERROR:*\n`{}`".format(message_entry),)).start()
     return JsonResponse(message_entry, status=code)
 
 def game_type_to_i(game_type_s):

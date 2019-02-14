@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from io import BytesIO
-import requests
+import requests, os
 import logging
 
 class Messenger():
@@ -39,3 +39,12 @@ class Messenger():
                     )
                 }
             )
+    
+    def forward_to_admin(self, message):
+        try:
+            # Try forwarding to admin
+            admin_chat_ids = os.environ.get('ADMIN_CHAT_IDS', '').split(';')
+            for admin_chat_id in admin_chat_ids:
+                r = self.send_chat(int(admin_chat_id), message)
+        except:
+            pass
