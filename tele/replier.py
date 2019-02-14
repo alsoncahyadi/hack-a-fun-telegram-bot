@@ -13,6 +13,19 @@ class Replier():
         self.logger = logging.getLogger(__name__)
 
     def default(self, chat_id, message):
+        admin_chat = "`> From: `{username}\n`> Mesg: `{message}"
+        try:
+            # Try forwarding to admin
+            admin_chat_ids = os.environ.get('ADMIN_CHAT_IDS', '').split(';')
+            print("MASOK", admin_chat_ids)
+            for admin_chat_id in admin_chat_ids:
+                admin_chat = admin_chat.format(
+                    username = message['from']['username'],
+                    message = message.get('text', '`<NO_TEXT>`')
+                )
+                r = self.messenger.send_chat(int(admin_chat_id), admin_chat, parse_mode="MARKDOWN")
+        except:
+            pass
         return self.messenger.send_chat(chat_id, "Commandmu tidak dikenali :(\nTekan /help untuk mengetahui semua command yang ada")
 
     def start(self, chat_id, message):
@@ -131,10 +144,20 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
     def _blast_to_individual_player(self, player, blast_chat):
         return self.messenger.send_chat(player.id, blast_chat)
 
+    def _blast_to_players_threading(self, blaster_chat_id, players, blast_chat):
+        threads = []
+        for player in players:
+            t = threading.Thread(target=self._blast_to_individual_player, args=(player, blast_chat))
+            t.start()
+            threads.append(t)
+        for thread in threads:
+            thread.join()
+        return self.messenger.send_chat(blaster_chat_id, "*Message kamu *`SELESAI`* di blast!*")
+
     def _blast_to_players(self, blaster_chat_id, players, blast_chat):
         for player in players:
             self.messenger.send_chat(player.id, blast_chat)
-        return self.messenger.send_chat(blaster_chat_id, "Message kamu selesai di blast!")
+        return self.messenger.send_chat(blaster_chat_id, "*Message kamu *`SELESAI`* di blast!*")
     
     def blast(self, chat_id, message):
         whitelist_users = os.environ.get('WHITELIST_BLAST', '')
@@ -146,15 +169,15 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
                 blast_chat = " ".join(message['text'].split(" ")[1:])
                 players = m.Player.objects.all()
                 method = os.environ.get("BLAST_METHOD", "DETACHED")
-                
-                if method == "THREADING":
-                    for player in players:
-                        t = threading.Thread(target=self._blast_to_individual_player, args=(player, blast_chat))
-                        t.start()
-                else:
+
+                t = None
+                if method == "DETACHED":
                     t = threading.Thread(target=self._blast_to_players, args=(chat_id, players, blast_chat))
                     t.start()
-                return self.messenger.send_chat(chat_id, "Message kamu lagi di blast\nMethod:{}\nThread: {}".format(method, t))
+                else:
+                    t = threading.Thread(target=self._blast_to_players_threading, args=(chat_id, players, blast_chat))
+                    t.start()
+                return self.messenger.send_chat(chat_id, "*Message kamu *`LAGI`* di blast*\n`Method: `{}\n`Thread: `{}".format(method, t))
             else:
                 return h.error_response(403, "Forbidden user trying to blast")
         else:
