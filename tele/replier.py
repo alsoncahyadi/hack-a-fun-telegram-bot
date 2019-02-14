@@ -146,14 +146,15 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
                 blast_chat = " ".join(message['text'].split(" ")[1:])
                 players = m.Player.objects.all()
                 method = os.environ.get("BLAST_METHOD", "DETACHED")
-                if method == "DETACHED":
-                    t = threading.Thread(target=self._blast_to_players, args=(chat_id, players, blast_chat))
-                    t.start()
-                elif method == "THREADING":
+                
+                if method == "THREADING":
                     for player in players:
                         t = threading.Thread(target=self._blast_to_individual_player, args=(player, blast_chat))
                         t.start()
-                return self.messenger.send_chat(chat_id, "Message kamu lagi di blast\nThread: {}".format(t))
+                else:
+                    t = threading.Thread(target=self._blast_to_players, args=(chat_id, players, blast_chat))
+                    t.start()
+                return self.messenger.send_chat(chat_id, "Message kamu lagi di blast\nMethod:{}\nThread: {}".format(method, t))
             else:
                 return h.error_response(403, "Forbidden user trying to blast")
         else:
