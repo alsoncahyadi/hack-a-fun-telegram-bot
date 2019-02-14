@@ -138,7 +138,7 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
                 blast_chat = " ".join(message['text'].split(" ")[1:])
                 players = m.Player.objects.all()
                 for player in players:
-                    self.messenger.send_chat(player.id, blast_chat, parse_mode='html')
+                    self.messenger.send_chat(player.id, blast_chat)
                 return self.messenger.send_chat(chat_id, "Message kamu berhasil di blast yay!")
             else:
                 return h.error_response(403, "Forbidden user trying to blast")
