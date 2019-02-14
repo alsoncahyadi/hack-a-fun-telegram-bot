@@ -16,7 +16,7 @@ import tele.helpers as h
 import json
 import os, traceback, logging
 
-TOKEN = os.environ['TELE_TOKEN']
+TOKEN = os.environ.get('TELE_TOKEN', '')
 messenger = Messenger(TOKEN)
 
 class AddPoint(APIView):

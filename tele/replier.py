@@ -2,7 +2,7 @@ from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from apple import models as m
 from .messenger import Messenger
 from . import helpers as h
-import qrcode, logging
+import qrcode, logging, os
 # from hashlib import md5
 
 class Replier():
@@ -121,20 +121,47 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 /help  ➡️  Menampilkan menu help"""
         return self.messenger.send_chat(chat_id, help_chat, parse_mode='html')
 
+    def jadwal(self, chat_id, message):
+        jadwal_chat = \
+"""
+
+"""
+        return self.messenger.send_chat(chat_id, help_chat, parse_mode='html')
+    
+    def blast(self, chat_id, message):
+        whitelist_users = os.environ.get('WHITELIST_BLAST', '')
+
+        if whitelist_users:
+            whitelist_users = [int(user_id) for user_id in whitelist_users.split(';')]
+
+            if chat_id in whitelist_users:
+                blast_chat = " ".join(message['text'].split(" ")[1:])
+                players = m.Player.objects.all()
+                for player in players:
+                    self.messenger.send_chat(player.id, blast_chat, parse_mode='html')
+                return self.messenger.send_chat(chat_id, "Message kamu berhasil di blast yay!")
+            else:
+                return h.error_response(403, "Forbidden user trying to blast")
+        else:
+            return h.error_response(403, "Forbidden, blast whitelist is empty")
+
     def reply(self, req_json, **kwargs):
         message = req_json['message']
         chat_id = message['chat']['id']
-        
-        function = self.map_reply_message(message)
+        text = message['text'].split()[0]
+
+        function = self.map_reply_message(text)
         return function(chat_id, message)
     
-    def map_reply_message(self, message):
+    def map_reply_message(self, text):
         return {
             '/start': self.start,
             '/help': self.help,
             '/qr': self.qr,
             '/detail': self.detail,
-        }.get(message['text'], self.default)
+            '/jadwal': self.jadwal,
+            '/blast': self.blast,
+        }.get(text, self.default)
 
     def _get_key(self, salt, chat_id, username, first_name, last_name):
         chat_id_str = str(chat_id).zfill(18) # BigInt max digit
