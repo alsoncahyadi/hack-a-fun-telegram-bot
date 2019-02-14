@@ -2,7 +2,7 @@ from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from apple import models as m
 from .messenger import Messenger
 from . import helpers as h
-import qrcode, logging, os
+import qrcode, logging, os, threading
 # from hashlib import md5
 
 class Replier():
@@ -127,6 +127,14 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
 
 """
         return self.messenger.send_chat(chat_id, help_chat, parse_mode='html')
+
+    def _blast_to_individual_player(self, player, blast_chat):
+        return self.messenger.send_chat(player.id, blast_chat)
+
+    def _blast_to_players(self, blaster_chat_id, players, blast_chat):
+        for player in players:
+            self.messenger.send_chat(player.id, blast_chat)
+        return self.messenger.send_chat(blaster_chat_id, "Message kamu selesai di blast!")
     
     def blast(self, chat_id, message):
         whitelist_users = os.environ.get('WHITELIST_BLAST', '')
@@ -137,9 +145,15 @@ Kamu bisa tekan /help untuk melihat semua command yang ada 😉"""
             if chat_id in whitelist_users:
                 blast_chat = " ".join(message['text'].split(" ")[1:])
                 players = m.Player.objects.all()
-                for player in players:
-                    self.messenger.send_chat(player.id, blast_chat)
-                return self.messenger.send_chat(chat_id, "Message kamu berhasil di blast yay!")
+                method = os.environ.get("BLAST_METHOD", "DETACHED")
+                if method == "DETACHED":
+                    t = threading.Thread(target=self._blast_to_players, args=(chat_id, players, blast_chat))
+                    t.start()
+                elif method == "THREADING":
+                    for player in players:
+                        t = threading.Thread(target=self._blast_to_individual_player, args=(player, blast_chat))
+                        t.start()
+                return self.messenger.send_chat(chat_id, "Message kamu lagi di blast\nThread: {}".format(t))
             else:
                 return h.error_response(403, "Forbidden user trying to blast")
         else:
