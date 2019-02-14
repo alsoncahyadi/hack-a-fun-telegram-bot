@@ -13,9 +13,10 @@ class Replier():
         self.logger = logging.getLogger(__name__)
 
     def default(self, chat_id, message):
-        admin_chat = "`> From: `{username}\n`> Mesg: `{message}"
+        admin_chat = "`> From: `{username} | {chat_id}\n`> Mesg: `{message}"
         admin_chat = admin_chat.format(
             username = message['from']['username'],
+            chat_id = message['from']['id'],
             message = message.get('text', '`<NO_TEXT>`')
         )
         threading.Thread(target=self.messenger.forward_to_admin, args=(admin_chat,)).start()
