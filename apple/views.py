@@ -85,7 +85,7 @@ class AddPoint(APIView):
     @transaction.atomic
     def _add_game_point(self, player, game_type, point, staff=None):
         # Monkey patch
-        gametype = 'ranking_1' if game_type == 'rangking_1' else gametype
+        game_type = 'ranking_1' if game_type == 'rangking_1' else game_type
         old_point = getattr(player, game_type + "_point")
         new_point = old_point + point
         setattr(player, game_type + "_point", new_point)
