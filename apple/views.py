@@ -29,48 +29,51 @@ class AddPoint(APIView):
     
     def post(self, request):
         self.logger.info((h.get_log(request)))
-        data = request.data
-        if self._is_data_valid(data):
-            # Validate chat_id
-            try:
-                chat_id = int(data['chat_id'])
-                player = Player.objects.get(id=chat_id)
-            except Player.DoesNotExist:
-                return h.error_response(404, "Player not found", messenger)
-
-            # Validate salt
-            if data['salt'] != player.salt:
-                return h.error_response(403, "Forbidden, wrong NaCl", messenger)
-
-            # Add point
-            try:
-                _, new_point, _ = self._add_game_point(player, data['game_type'], int(data['point']), request.user)
-                connection.close()
-            except AttributeError:
-                return h.error_response(422, "Invalid game_type: {}".format(data['game_type']), messenger)
-            except:
-                return h.error_response(500, "Error saving {}".format(data), messenger)
-
-            # Notify user
-            try:
-                response = messenger.send_chat(chat_id, self.point_added_notification_message.format(
-                    game_name = h.game_type_s_to_name(data['game_type']),
-                    point = int(data['point']),
-                    final_value = new_point,
-                ), parse_mode='html')
-                print("> INFO : Notif status {} for {}".format(response, data['chat_id']))
-            except:
-                print("> ERROR: Failed sending notif to {} with trace {}".format(data['chat_id'], traceback.format_exc(5).splitlines(),))
-
-            # Return response
-            return JsonResponse({
-                    'message': PlayerSerializer(player).data,
-                    'code': 201
-                },
-                status=201,
-            )
+        if os.getenv('ALLOW_ADD_POINT') == 'FALSE':
+            return h.error_response(405, "Udah ditutup pointnya :(")
         else:
-            return h.error_response(422, "Invalid key or incomplete payload", messenger)
+            data = request.data
+            if self._is_data_valid(data):
+                # Validate chat_id
+                try:
+                    chat_id = int(data['chat_id'])
+                    player = Player.objects.get(id=chat_id)
+                except Player.DoesNotExist:
+                    return h.error_response(404, "Player not found", messenger)
+
+                # Validate salt
+                if data['salt'] != player.salt:
+                    return h.error_response(403, "Forbidden, wrong NaCl", messenger)
+
+                # Add point
+                try:
+                    _, new_point, _ = self._add_game_point(player, data['game_type'], int(data['point']), request.user)
+                    connection.close()
+                except AttributeError:
+                    return h.error_response(422, "Invalid game_type: {}".format(data['game_type']), messenger)
+                except:
+                    return h.error_response(500, "Error saving {}".format(data), messenger)
+
+                # Notify user
+                try:
+                    response = messenger.send_chat(chat_id, self.point_added_notification_message.format(
+                        game_name = h.game_type_s_to_name(data['game_type']),
+                        point = int(data['point']),
+                        final_value = new_point,
+                    ), parse_mode='html')
+                    print("> INFO : Notif status {} for {}".format(response, data['chat_id']))
+                except:
+                    print("> ERROR: Failed sending notif to {} with trace {}".format(data['chat_id'], traceback.format_exc(5).splitlines(),))
+
+                # Return response
+                return JsonResponse({
+                        'message': PlayerSerializer(player).data,
+                        'code': 201
+                    },
+                    status=201,
+                )
+            else:
+                return h.error_response(422, "Invalid key or incomplete payload", messenger)
 
     def _is_data_valid(self, data):
         required_params = ('game_type', 'point', 'chat_id', 'salt')
