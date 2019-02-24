@@ -14,6 +14,8 @@ import os
 import dj_database_url
 import django_heroku
 
+IS_DOCKER = os.environ.get('IS_DOCKER', 'FALSE') == "TRUE"
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,21 +35,25 @@ ALLOWED_HOSTS = ["gameathon.herokuapp.com", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'apple',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -61,7 +67,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
         'APP_DIRS': True,
-        'HOST': '0.0.0.0',
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -75,18 +80,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apple.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'apple',
-        'USER': 'root',
-        'PASSWORD': 'rootpw',
+SITE_ID = 1
+if IS_DOCKER:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'apple',
+            'USER': os.environ.get('DB_USER', 'root'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'averystrongpassword'), 
+            'HOST': 'db',
+            'PORT': 3306,
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'apple',
+            'USER': 'root',
+            'PASSWORD': 'rootpw',
+        }
+    }
 
 # DB_URL = os.getenv('DB_URL')
 # DATABASES['default'] = dj_database_url.parse(DB_URL, conn_max_age=600)
@@ -139,13 +156,14 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # REST
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.DjangoModelPermissions'
+        # 'rest_framework.permissions.IsAuthenticated'
     ],
-    # 'DEFAULT_PAGINATION_CLASS': 'arfi.serializers.MyPagination',
-
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -164,6 +182,7 @@ DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap.html'
 django_heroku.settings(locals())
 
 # Logging
+LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -179,3 +198,5 @@ LOGGING = {
         },
     },
 }
+import logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)

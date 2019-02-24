@@ -1,5 +1,9 @@
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from rest_framework.parsers import JSONParser, FormParser
+from django.db import connection
 import requests
 import logging
 import json
@@ -7,32 +11,30 @@ import os
 import qrcode
 from . import helpers as h
 from .replier import Replier
+from .messenger import Messenger
 from apple import models
 
-logger = logging.getLogger(__name__)
-
 TOKEN = os.environ['TELE_TOKEN']
-replier = Replier(TOKEN)
+messenger = Messenger(TOKEN)
+replier = Replier(messenger)
 
-def chat(request):
+class Chat(APIView):
+    permission_classes = (AllowAny,)
+    parser_classes = (JSONParser,)
+    
+    def post(self, request):
+        print(h.get_log(request))
+        try:
+            data = request.data
+            if not h.is_message_valid(data):
+                return HttpResponse("Sneaky you! You're not authorized!")
+            response = replier.reply(data)
+            return JsonResponse(json.loads(response.content))
+        except:
+            return h.error_response(500, "Internal server error", messenger)
+        finally:
+            connection.close()
 
-    if request.method == "POST" and request.body:
-        req_json = json.loads(request.body)
-        print(req_json)
-        h.escape_if_not_authorized(req_json)
-        response = replier.reply(req_json)
-        return HttpResponse(response.content)
-        
-        # message = req_json['message']
-
-        # chat_id = message['chat']['id']
-        # key = str(chat_id) + h.generate_salt()
-        # qr = qrcode.make(key)
-        # caption = "Hello, {} {}!".format(message['from'].get('first_name', ''), message['from'].get('last_name', ''))
-        
-        # return messenger.send_qr(message, qr, caption)
-    else:
-        return HttpResponse("Sneaky you!")
 
 def healthz(request):
     return HttpResponse("OK")
